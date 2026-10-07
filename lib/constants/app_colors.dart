@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Palet warna dasar QuizMate yang dipakai lintas layar.
-///
-/// Hanya berisi konstanta warna. Pengaturan theme aplikasi secara
-/// menyeluruh akan dibuat pada tahap berikutnya.
 class AppColors {
   const AppColors._();
 
