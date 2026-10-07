@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 
-class _AppColors {
-  static const primary = Color(0xFF315C8A);
-  static const background = Color(0xFFF7F8FA);
-  static const surface = Color(0xFFFFFFFF);
-  static const textPrimary = Color(0xFF20252B);
-  static const textSecondary = Color(0xFF6B7280);
-  static const border = Color(0xFFE2E5E9);
-  static const error = Color(0xFFD85C5C);
-  static const success = Color(0xFF4E9F70);
-}
+import '../constants/app_colors.dart';
+import 'quiz_screen.dart';
 
+/// Layar pembuka tempat pengguna mengisi nama sebelum memulai kuis.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
 
+  /// Validasi format email sederhana, mis. `nama@domain.com`.
   static final _emailPattern = RegExp(r'^[\w.+-]+@[\w-]+(\.[\w-]+)+$');
 
   @override
@@ -41,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? _validateEmail(String? value) {
     final email = value?.trim() ?? '';
+    // Email bersifat opsional, jadi kosong tetap boleh.
     if (email.isEmpty) {
       return null;
     }
@@ -58,27 +53,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
 
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: _AppColors.success,
-        content: Text(
-          email.isEmpty
-              ? 'Siap, $name! Data kamu siap digunakan.'
-              : 'Siap, $name! Data kamu siap digunakan ($email).',
-        ),
-      ),
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => QuizScreen(playerName: name)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _AppColors.background,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -93,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
+                  // Biarkan konten terpusat saat layar tinggi,
+                  // tetapi tetap bisa di-scroll saat layar pendek / keyboard muncul.
                   minHeight: constraints.maxHeight - (verticalPadding * 2),
                 ),
                 child: Center(
@@ -137,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               fontSize: 12.5,
                               height: 1.4,
-                              color: _AppColors.textSecondary,
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -154,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+/// Bagian atas: tanda aplikasi kecil + nama + headline.
 class _BrandHeader extends StatelessWidget {
   const _BrandHeader();
 
@@ -168,7 +155,7 @@ class _BrandHeader extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: _AppColors.primary,
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -183,7 +170,7 @@ class _BrandHeader extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: _AppColors.textPrimary,
+                color: AppColors.textPrimary,
               ),
             ),
           ],
@@ -195,7 +182,7 @@ class _BrandHeader extends StatelessWidget {
             fontSize: 26,
             fontWeight: FontWeight.w700,
             height: 1.25,
-            color: _AppColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -205,7 +192,7 @@ class _BrandHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 14.5,
             height: 1.5,
-            color: _AppColors.textSecondary,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -213,6 +200,7 @@ class _BrandHeader extends StatelessWidget {
   }
 }
 
+/// Text field dengan label di atas, dipakai ulang untuk nama dan email.
 class _LabeledTextField extends StatelessWidget {
   const _LabeledTextField({
     required this.label,
@@ -255,7 +243,7 @@ class _LabeledTextField extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: _AppColors.textPrimary,
+                color: AppColors.textPrimary,
               ),
             ),
           ],
@@ -268,24 +256,24 @@ class _LabeledTextField extends StatelessWidget {
           textInputAction: textInputAction,
           textCapitalization: textCapitalization,
           onFieldSubmitted: onSubmitted,
-          style: const TextStyle(fontSize: 15, color: _AppColors.textPrimary),
+          style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
-            fillColor: _AppColors.surface,
+            fillColor: AppColors.surface,
             hintStyle: const TextStyle(
               fontSize: 15,
-              color: _AppColors.textSecondary,
+              color: AppColors.textSecondary,
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 14,
             ),
-            border: _border(_AppColors.border),
-            enabledBorder: _border(_AppColors.border),
-            focusedBorder: _border(_AppColors.primary, width: 1.5),
-            errorBorder: _border(_AppColors.error),
-            focusedErrorBorder: _border(_AppColors.error, width: 1.5),
+            border: _border(AppColors.border),
+            enabledBorder: _border(AppColors.border),
+            focusedBorder: _border(AppColors.primary, width: 1.5),
+            errorBorder: _border(AppColors.error),
+            focusedErrorBorder: _border(AppColors.error, width: 1.5),
           ),
         ),
       ],
@@ -293,6 +281,7 @@ class _LabeledTextField extends StatelessWidget {
   }
 }
 
+/// Tombol aksi utama dengan gaya seragam.
 class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({required this.label, required this.onPressed});
 
@@ -306,9 +295,9 @@ class _PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _AppColors.primary,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: _AppColors.border,
+          disabledBackgroundColor: AppColors.border,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
