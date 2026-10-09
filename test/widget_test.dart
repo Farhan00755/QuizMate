@@ -72,6 +72,24 @@ void main() {
     expect(find.text(option), findsOneWidget);
   });
 
+  testWidgets('Menampilkan progres dan pindah ke soal berikutnya', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: QuizScreen(playerName: 'Budi')),
+    );
+
+    expect(find.text('Soal 1 dari ${quizQuestions.length}'), findsOneWidget);
+
+    await tester.tap(find.text(quizQuestions[0].options.first));
+    await tester.pump();
+    await tester.tap(find.text('Soal berikutnya'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Soal 2 dari ${quizQuestions.length}'), findsOneWidget);
+    expect(find.text(quizQuestions[1].question), findsOneWidget);
+  });
+
   test('Data soal lokal valid', () {
     expect(quizQuestions, isNotEmpty);
     for (final question in quizQuestions) {
