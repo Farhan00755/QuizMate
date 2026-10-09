@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import '../widgets/primary_button.dart';
 import 'quiz_screen.dart';
 
 /// Layar pembuka tempat pengguna mengisi nama sebelum memulai kuis.
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onSubmitted: (_) => _handleStartQuiz(),
                           ),
                           const SizedBox(height: 28),
-                          _PrimaryButton(
+                          PrimaryButton(
                             label: 'Mulai Kuis',
                             onPressed: _handleStartQuiz,
                           ),
@@ -277,35 +278,6 @@ class _LabeledTextField extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Tombol aksi utama dengan gaya seragam.
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({required this.label, required this.onPressed});
-
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: AppColors.border,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        child: Text(label),
-      ),
     );
   }
 }

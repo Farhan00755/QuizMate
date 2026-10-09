@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../data/questions.dart';
 import '../models/question.dart';
+import '../widgets/primary_button.dart';
 
-/// Layar kuis yang menampilkan soal pilihan ganda.
+const double _contentMaxWidth = 560;
+
+/// Layar kuis yang menampilkan soal pilihan ganda satu per satu.
 ///
-/// Tahap ini menambahkan pemilihan jawaban: pengguna dapat menekan salah satu
-/// opsi dan pilihannya akan ditandai. Perpindahan antar soal, progres, dan
-/// penilaian jawaban akan ditambahkan pada tahap berikutnya.
+/// Tahap ini menambahkan progres soal ("Soal x dari y" + progress bar) dan
+/// perpindahan ke soal berikutnya. Penilaian akhir dan Result Screen akan
+/// ditambahkan pada tahap berikutnya.
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key, required this.playerName});
 
@@ -20,20 +23,52 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  // Soal yang sedang ditampilkan; untuk sementara selalu soal pertama.
-  final Question _question = quizQuestions.first;
+  // Indeks soal yang sedang ditampilkan.
+  int _currentIndex = 0;
 
-  // Indeks opsi yang dipilih pengguna, `null` bila belum ada pilihan.
-  int? _selectedIndex;
+  // Jawaban pengguna per soal (indeks opsi), `null` bila belum dijawab.
+  final List<int?> _answers = List<int?>.filled(quizQuestions.length, null);
+
+  Question get _currentQuestion => quizQuestions[_currentIndex];
+
+  int get _selectedIndex => _answers[_currentIndex] ?? -1;
+
+  bool get _isLastQuestion => _currentIndex == quizQuestions.length - 1;
 
   void _selectOption(int index) {
     setState(() {
-      _selectedIndex = index;
+      _answers[_currentIndex] = index;
+    });
+  }
+
+  void _handleNext() {
+    if (_answers[_currentIndex] == null) {
+      return;
+    }
+
+    if (_isLastQuestion) {
+      // Result Screen akan ditambahkan pada tahap berikutnya.
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Semua soal sudah dijawab.'),
+          ),
+        );
+      return;
+    }
+
+    setState(() {
+      _currentIndex++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final question = _currentQuestion;
+    final hasAnswer = _answers[_currentIndex] != null;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -41,16 +76,30 @@ class _QuizScreenState extends State<QuizScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _QuizHeader(onBack: () => Navigator.of(context).maybePop()),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
+                  child: _QuizProgress(
+                    current: _currentIndex + 1,
+                    total: quizQuestions.length,
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 560),
+                    constraints: const BoxConstraints(
+                      maxWidth: _contentMaxWidth,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _QuestionCard(question: _question),
+                        _QuestionCard(question: question),
                         const SizedBox(height: 20),
                         const Text(
                           'Pilih satu jawaban yang paling tepat.',
@@ -60,18 +109,30 @@ class _QuizScreenState extends State<QuizScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        for (var i = 0; i < _question.options.length; i++) ...[
+                        for (var i = 0; i < question.options.length; i++) ...[
                           _OptionTile(
                             index: i,
-                            text: _question.options[i],
+                            text: question.options[i],
                             isSelected: _selectedIndex == i,
                             onTap: () => _selectOption(i),
                           ),
-                          if (i != _question.options.length - 1)
+                          if (i != question.options.length - 1)
                             const SizedBox(height: 12),
                         ],
                       ],
                     ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
+                  child: PrimaryButton(
+                    label: _isLastQuestion ? 'Selesai' : 'Soal berikutnya',
+                    onPressed: hasAnswer ? _handleNext : null,
                   ),
                 ),
               ),
@@ -112,6 +173,44 @@ class _QuizHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Indikator progres: teks "Soal x dari y" dan progress bar.
+class _QuizProgress extends StatelessWidget {
+  const _QuizProgress({required this.current, required this.total});
+
+  /// Nomor soal yang sedang ditampilkan (dimulai dari 1).
+  final int current;
+
+  /// Jumlah seluruh soal.
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Soal $current dari $total',
+          style: const TextStyle(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: total == 0 ? 0 : current / total,
+            minHeight: 6,
+            backgroundColor: AppColors.border,
+            color: AppColors.primary,
+          ),
+        ),
+      ],
     );
   }
 }
