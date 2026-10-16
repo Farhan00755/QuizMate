@@ -201,12 +201,7 @@ class _QuizProgress extends StatelessWidget {
         const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: value,
-            minHeight: 6,
-            backgroundColor: AppColors.border,
-            color: AppColors.primary,
-          ),
+          child: LinearProgressIndicator(value: value, minHeight: 6),
         ),
       ],
     );

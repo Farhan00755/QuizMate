@@ -15,7 +15,8 @@ class ResultScreen extends StatelessWidget {
   final int correctCount;
   final int totalQuestions;
 
-  double get _percentage => totalQuestions == 0 ? 0 : correctCount / totalQuestions;
+  double get _percentage =>
+      totalQuestions == 0 ? 0 : correctCount / totalQuestions;
 
   String get _feedback {
     if (_percentage >= 0.8) {
@@ -27,96 +28,107 @@ class ResultScreen extends StatelessWidget {
     return 'Jangan menyerah, coba lagi ya.';
   }
 
+  void _backToHome(BuildContext context) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            const verticalPadding = 32.0;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        _backToHome(context);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              const verticalPadding = 32.0;
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: verticalPadding,
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight - (verticalPadding * 2),
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: verticalPadding,
                 ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 420),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(14),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - (verticalPadding * 2),
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: const Icon(
+                                Icons.emoji_events_outlined,
+                                color: Colors.white,
+                                size: 28,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.emoji_events_outlined,
-                              color: Colors.white,
-                              size: 28,
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'Kuis selesai',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Kuis selesai',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                          const SizedBox(height: 8),
+                          Text(
+                            'Kerja bagus, $playerName!',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14.5,
+                              height: 1.5,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Kerja bagus, $playerName!',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 14.5,
-                            height: 1.5,
-                            color: AppColors.textSecondary,
+                          const SizedBox(height: 28),
+                          _ScoreCard(
+                            correctCount: correctCount,
+                            totalQuestions: totalQuestions,
+                            percentage: _percentage,
                           ),
-                        ),
-                        const SizedBox(height: 28),
-                        _ScoreCard(
-                          correctCount: correctCount,
-                          totalQuestions: totalQuestions,
-                          percentage: _percentage,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          _feedback,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            height: 1.5,
-                            color: AppColors.textPrimary,
+                          const SizedBox(height: 20),
+                          Text(
+                            _feedback,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              height: 1.5,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 28),
-                        PrimaryButton(
-                          label: 'Ulangi Kuis',
-                          onPressed: () =>
-                              Navigator.of(context)
-                                  .popUntil((route) => route.isFirst),
-                        ),
-                      ],
+                          const SizedBox(height: 28),
+                          PrimaryButton(
+                            label: 'Ulangi Kuis',
+                            onPressed: () => _backToHome(context),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -162,12 +174,7 @@ class _ScoreCard extends StatelessWidget {
           const SizedBox(height: 18),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: percentage,
-              minHeight: 8,
-              backgroundColor: AppColors.border,
-              color: AppColors.primary,
-            ),
+            child: LinearProgressIndicator(value: percentage, minHeight: 8),
           ),
           const SizedBox(height: 10),
           Text(

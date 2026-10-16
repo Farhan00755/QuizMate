@@ -218,13 +218,6 @@ class _LabeledTextField extends StatelessWidget {
   final bool isOptional;
   final ValueChanged<String>? onSubmitted;
 
-  OutlineInputBorder _border(Color color, {double width = 1}) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: color, width: width),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -261,24 +254,7 @@ class _LabeledTextField extends StatelessWidget {
           textCapitalization: textCapitalization,
           onFieldSubmitted: onSubmitted,
           style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
-          decoration: InputDecoration(
-            hintText: hint,
-            filled: true,
-            fillColor: AppColors.surface,
-            hintStyle: const TextStyle(
-              fontSize: 15,
-              color: AppColors.textSecondary,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 14,
-            ),
-            border: _border(AppColors.border),
-            enabledBorder: _border(AppColors.border),
-            focusedBorder: _border(AppColors.primary, width: 1.5),
-            errorBorder: _border(AppColors.error),
-            focusedErrorBorder: _border(AppColors.error, width: 1.5),
-          ),
+          decoration: InputDecoration(hintText: hint),
         ),
       ],
     );

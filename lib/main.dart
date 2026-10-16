@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const QuizMateApp());
@@ -14,11 +15,7 @@ class QuizMateApp extends StatelessWidget {
     return MaterialApp(
       title: 'QuizMate',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF7F8FA),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF315C8A)),
-      ),
+      theme: AppTheme.light,
       home: const HomeScreen(),
     );
   }
