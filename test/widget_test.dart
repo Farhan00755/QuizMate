@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:quiz_mate/constants/app_colors.dart';
 import 'package:quiz_mate/data/questions.dart';
+import 'package:quiz_mate/main.dart';
 import 'package:quiz_mate/screens/home_screen.dart';
 import 'package:quiz_mate/screens/quiz_screen.dart';
 import 'package:quiz_mate/screens/result_screen.dart';
+
+Future<void> answerAllQuestions(WidgetTester tester) async {
+  for (var i = 0; i < quizQuestions.length; i++) {
+    final question = quizQuestions[i];
+    final correctOption = find.text(question.options[question.correctIndex]);
+
+    await tester.ensureVisible(correctOption);
+    await tester.pumpAndSettle();
+    await tester.tap(correctOption);
+    await tester.pump();
+
+    await tester.tap(
+      find.text(i == quizQuestions.length - 1 ? 'Selesai' : 'Soal berikutnya'),
+    );
+    await tester.pumpAndSettle();
+  }
+}
+
+Future<void> startQuiz(WidgetTester tester, {String name = 'Budi'}) async {
+  await tester.enterText(find.byType(TextFormField).first, name);
+  await tester.tap(find.text('Mulai Kuis'));
+  await tester.pumpAndSettle();
+}
 
 void main() {
   testWidgets('Menampilkan elemen utama Home Screen', (
@@ -37,10 +62,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
-
-    await tester.enterText(find.byType(TextFormField).first, 'Budi');
-    await tester.tap(find.text('Mulai Kuis'));
-    await tester.pumpAndSettle();
+    await startQuiz(tester);
 
     expect(find.byType(QuizScreen), findsOneWidget);
   });
@@ -95,29 +117,55 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(home: QuizScreen(playerName: 'Budi')),
     );
-
-    for (var i = 0; i < quizQuestions.length; i++) {
-      final question = quizQuestions[i];
-      final correctOption = find.text(question.options[question.correctIndex]);
-
-      await tester.ensureVisible(correctOption);
-      await tester.pumpAndSettle();
-      await tester.tap(correctOption);
-      await tester.pump();
-
-      await tester.tap(
-        find.text(
-          i == quizQuestions.length - 1 ? 'Selesai' : 'Soal berikutnya',
-        ),
-      );
-      await tester.pumpAndSettle();
-    }
+    await answerAllQuestions(tester);
 
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(
       find.text('${quizQuestions.length} / ${quizQuestions.length}'),
       findsOneWidget,
     );
+    expect(find.text('Kerja bagus, Budi!'), findsOneWidget);
+  });
+
+  testWidgets('Ulangi Kuis dari Result Screen kembali ke Home', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await startQuiz(tester);
+    await answerAllQuestions(tester);
+
+    await tester.tap(find.text('Ulangi Kuis'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(ResultScreen), findsNothing);
+    expect(find.byType(QuizScreen), findsNothing);
+  });
+
+  testWidgets('Tombol back di Result Screen kembali ke Home', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await startQuiz(tester);
+    await answerAllQuestions(tester);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(ResultScreen), findsNothing);
+  });
+
+  testWidgets('Aplikasi memakai AppTheme dan menampilkan Home', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const QuizMateApp());
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+
+    final theme = Theme.of(tester.element(find.byType(HomeScreen)));
+    expect(theme.scaffoldBackgroundColor, AppColors.background);
+    expect(theme.colorScheme.primary, AppColors.primary);
   });
 
   test('Data soal lokal valid', () {
