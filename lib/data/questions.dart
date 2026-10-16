@@ -1,9 +1,5 @@
 import '../models/question.dart';
 
-/// Soal kuis lokal yang dipakai aplikasi.
-///
-/// Data disimpan langsung di kode (tanpa backend) agar mudah diganti
-/// atau dipindah ke sumber lain pada tahap berikutnya.
 const List<Question> quizQuestions = [
   Question(
     question: 'Apa kepanjangan dari CPU?',

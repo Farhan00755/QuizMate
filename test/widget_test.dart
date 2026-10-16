@@ -1,5 +1,3 @@
-// Smoke test dasar untuk Home Screen dan Quiz Screen QuizMate.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

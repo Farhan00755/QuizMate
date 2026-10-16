@@ -2,11 +2,6 @@ import 'package:flutter/foundation.dart';
 
 import '../models/question.dart';
 
-/// Mengelola state jalannya kuis: soal aktif, jawaban pengguna, dan progres.
-///
-/// Logika dipisahkan dari widget agar dapat diuji dan dikembangkan tanpa
-/// mengubah tampilan. Memakai [ChangeNotifier] bawaan Flutter sehingga tidak
-/// memerlukan package tambahan.
 class QuizController extends ChangeNotifier {
   QuizController({required List<Question> questions})
     : _questions = questions,
@@ -27,20 +22,15 @@ class QuizController extends ChangeNotifier {
 
   bool get isLastQuestion => _currentIndex == _questions.length - 1;
 
-  /// Indeks opsi yang dipilih pada soal aktif, atau `-1` bila belum dijawab.
   int get selectedIndex => _answers[_currentIndex] ?? -1;
 
-  /// `true` bila soal aktif sudah dijawab.
   bool get hasAnsweredCurrent => _answers[_currentIndex] != null;
 
-  /// Progres kuis bernilai 0..1.
   double get progress =>
       totalQuestions == 0 ? 0 : (_currentIndex + 1) / totalQuestions;
 
-  /// Jumlah soal yang sudah dijawab.
   int get answeredCount => _answers.where((answer) => answer != null).length;
 
-  /// Jumlah jawaban benar (soal yang belum dijawab dihitung salah).
   int get correctCount {
     var count = 0;
     for (var i = 0; i < _questions.length; i++) {
@@ -51,7 +41,6 @@ class QuizController extends ChangeNotifier {
     return count;
   }
 
-  /// Menyimpan pilihan pengguna untuk soal aktif.
   void selectOption(int index) {
     if (index < 0 || index >= currentQuestion.options.length) {
       return;
@@ -63,10 +52,6 @@ class QuizController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Pindah ke soal berikutnya.
-  ///
-  /// Tidak melakukan apa-apa bila soal aktif belum dijawab atau sudah
-  /// berada di soal terakhir.
   void next() {
     if (!hasAnsweredCurrent || isLastQuestion) {
       return;

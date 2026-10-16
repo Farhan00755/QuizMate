@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-/// Tombol aksi utama dengan gaya seragam di seluruh aplikasi.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
@@ -11,8 +10,6 @@ class PrimaryButton extends StatelessWidget {
   });
 
   final String label;
-
-  /// Bila `null`, tombol tampil dalam keadaan nonaktif.
   final VoidCallback? onPressed;
 
   @override

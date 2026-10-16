@@ -240,6 +240,16 @@ class _LabeledTextField extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
+            if (isOptional) ...[
+              const SizedBox(width: 6),
+              const Text(
+                '(opsional)',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
           ],
         ),
         const SizedBox(height: 8),

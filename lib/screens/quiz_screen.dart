@@ -182,9 +182,7 @@ class _QuizProgress extends StatelessWidget {
   });
 
   final int current;
-
   final int total;
-
   final double value;
 
   @override
@@ -215,7 +213,6 @@ class _QuizProgress extends StatelessWidget {
   }
 }
 
-/// Kartu berisi teks pertanyaan.
 class _QuestionCard extends StatelessWidget {
   const _QuestionCard({required this.question});
 

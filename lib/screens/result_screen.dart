@@ -12,9 +12,7 @@ class ResultScreen extends StatelessWidget {
   });
 
   final String playerName;
-
   final int correctCount;
-
   final int totalQuestions;
 
   double get _percentage => totalQuestions == 0 ? 0 : correctCount / totalQuestions;
@@ -125,7 +123,6 @@ class ResultScreen extends StatelessWidget {
   }
 }
 
-/// Kartu skor akhir: nilai, progress bar, dan persentase.
 class _ScoreCard extends StatelessWidget {
   const _ScoreCard({
     required this.correctCount,
