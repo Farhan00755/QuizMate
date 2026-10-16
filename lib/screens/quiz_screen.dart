@@ -5,18 +5,13 @@ import '../data/questions.dart';
 import '../models/question.dart';
 import '../state/quiz_controller.dart';
 import '../widgets/primary_button.dart';
+import 'result_screen.dart';
 
 const double _contentMaxWidth = 560;
 
-/// Layar kuis yang menampilkan soal pilihan ganda satu per satu.
-///
-/// State jalannya kuis dikelola oleh [QuizController], sehingga widget ini
-/// hanya bertugas merender tampilan. Penilaian akhir dan Result Screen akan
-/// ditambahkan pada tahap berikutnya.
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key, required this.playerName});
 
-  /// Nama pengguna dari Home Screen, akan dipakai pada Result Screen nanti.
   final String playerName;
 
   @override
@@ -36,15 +31,15 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _handleNext() {
     if (_controller.isLastQuestion) {
-      // Result Screen akan ditambahkan pada tahap berikutnya.
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Semua soal sudah dijawab.'),
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ResultScreen(
+            playerName: widget.playerName,
+            correctCount: _controller.correctCount,
+            totalQuestions: _controller.totalQuestions,
           ),
-        );
+        ),
+      );
       return;
     }
     _controller.next();
@@ -147,7 +142,6 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 }
 
-/// Header sederhana: tombol kembali + nama aplikasi.
 class _QuizHeader extends StatelessWidget {
   const _QuizHeader({required this.onBack});
 
@@ -180,7 +174,6 @@ class _QuizHeader extends StatelessWidget {
   }
 }
 
-/// Indikator progres: teks "Soal x dari y" dan progress bar.
 class _QuizProgress extends StatelessWidget {
   const _QuizProgress({
     required this.current,
@@ -188,13 +181,10 @@ class _QuizProgress extends StatelessWidget {
     required this.value,
   });
 
-  /// Nomor soal yang sedang ditampilkan (dimulai dari 1).
   final int current;
 
-  /// Jumlah seluruh soal.
   final int total;
 
-  /// Nilai progres 0..1.
   final double value;
 
   @override
@@ -254,10 +244,6 @@ class _QuestionCard extends StatelessWidget {
   }
 }
 
-/// Satu pilihan jawaban dengan penanda huruf (A, B, C, D).
-///
-/// Dapat ditekan untuk memilih. Opsi yang dipilih ditandai dengan border
-/// dan penanda huruf berwarna primary.
 class _OptionTile extends StatelessWidget {
   const _OptionTile({
     required this.index,
