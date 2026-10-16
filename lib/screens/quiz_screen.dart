@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../data/questions.dart';
 import '../models/question.dart';
+import '../state/quiz_controller.dart';
 import '../widgets/primary_button.dart';
 
 const double _contentMaxWidth = 560;
 
 /// Layar kuis yang menampilkan soal pilihan ganda satu per satu.
 ///
-/// Tahap ini menambahkan progres soal ("Soal x dari y" + progress bar) dan
-/// perpindahan ke soal berikutnya. Penilaian akhir dan Result Screen akan
+/// State jalannya kuis dikelola oleh [QuizController], sehingga widget ini
+/// hanya bertugas merender tampilan. Penilaian akhir dan Result Screen akan
 /// ditambahkan pada tahap berikutnya.
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key, required this.playerName});
@@ -23,30 +24,18 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  // Indeks soal yang sedang ditampilkan.
-  int _currentIndex = 0;
+  late final QuizController _controller = QuizController(
+    questions: quizQuestions,
+  );
 
-  // Jawaban pengguna per soal (indeks opsi), `null` bila belum dijawab.
-  final List<int?> _answers = List<int?>.filled(quizQuestions.length, null);
-
-  Question get _currentQuestion => quizQuestions[_currentIndex];
-
-  int get _selectedIndex => _answers[_currentIndex] ?? -1;
-
-  bool get _isLastQuestion => _currentIndex == quizQuestions.length - 1;
-
-  void _selectOption(int index) {
-    setState(() {
-      _answers[_currentIndex] = index;
-    });
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void _handleNext() {
-    if (_answers[_currentIndex] == null) {
-      return;
-    }
-
-    if (_isLastQuestion) {
+    if (_controller.isLastQuestion) {
       // Result Screen akan ditambahkan pada tahap berikutnya.
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -58,86 +47,100 @@ class _QuizScreenState extends State<QuizScreen> {
         );
       return;
     }
-
-    setState(() {
-      _currentIndex++;
-    });
+    _controller.next();
   }
 
   @override
   Widget build(BuildContext context) {
-    final question = _currentQuestion;
-    final hasAnswer = _answers[_currentIndex] != null;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _QuizHeader(onBack: () => Navigator.of(context).maybePop()),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
-                  child: _QuizProgress(
-                    current: _currentIndex + 1,
-                    total: quizQuestions.length,
+        child: ListenableBuilder(
+          listenable: _controller,
+          builder: (context, _) {
+            final question = _controller.currentQuestion;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _QuizHeader(onBack: () => Navigator.of(context).maybePop()),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: _contentMaxWidth,
+                      ),
+                      child: _QuizProgress(
+                        current: _controller.currentIndex + 1,
+                        total: _controller.totalQuestions,
+                        value: _controller.progress,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: _contentMaxWidth,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _QuestionCard(question: question),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Pilih satu jawaban yang paling tepat.',
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            color: AppColors.textSecondary,
-                          ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: _contentMaxWidth,
                         ),
-                        const SizedBox(height: 12),
-                        for (var i = 0; i < question.options.length; i++) ...[
-                          _OptionTile(
-                            index: i,
-                            text: question.options[i],
-                            isSelected: _selectedIndex == i,
-                            onTap: () => _selectOption(i),
-                          ),
-                          if (i != question.options.length - 1)
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _QuestionCard(question: question),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Pilih satu jawaban yang paling tepat.',
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                             const SizedBox(height: 12),
-                        ],
-                      ],
+                            for (
+                              var i = 0;
+                              i < question.options.length;
+                              i++
+                            ) ...[
+                              _OptionTile(
+                                index: i,
+                                text: question.options[i],
+                                isSelected: _controller.selectedIndex == i,
+                                onTap: () => _controller.selectOption(i),
+                              ),
+                              if (i != question.options.length - 1)
+                                const SizedBox(height: 12),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
-                  child: PrimaryButton(
-                    label: _isLastQuestion ? 'Selesai' : 'Soal berikutnya',
-                    onPressed: hasAnswer ? _handleNext : null,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: _contentMaxWidth,
+                      ),
+                      child: PrimaryButton(
+                        label: _controller.isLastQuestion
+                            ? 'Selesai'
+                            : 'Soal berikutnya',
+                        onPressed: _controller.hasAnsweredCurrent
+                            ? _handleNext
+                            : null,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -179,13 +182,20 @@ class _QuizHeader extends StatelessWidget {
 
 /// Indikator progres: teks "Soal x dari y" dan progress bar.
 class _QuizProgress extends StatelessWidget {
-  const _QuizProgress({required this.current, required this.total});
+  const _QuizProgress({
+    required this.current,
+    required this.total,
+    required this.value,
+  });
 
   /// Nomor soal yang sedang ditampilkan (dimulai dari 1).
   final int current;
 
   /// Jumlah seluruh soal.
   final int total;
+
+  /// Nilai progres 0..1.
+  final double value;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +214,7 @@ class _QuizProgress extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
-            value: total == 0 ? 0 : current / total,
+            value: value,
             minHeight: 6,
             backgroundColor: AppColors.border,
             color: AppColors.primary,
