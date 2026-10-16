@@ -21,6 +21,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      fontFamily: 'Roboto',
       scaffoldBackgroundColor: AppColors.background,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
