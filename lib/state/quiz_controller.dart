@@ -37,6 +37,20 @@ class QuizController extends ChangeNotifier {
   double get progress =>
       totalQuestions == 0 ? 0 : (_currentIndex + 1) / totalQuestions;
 
+  /// Jumlah soal yang sudah dijawab.
+  int get answeredCount => _answers.where((answer) => answer != null).length;
+
+  /// Jumlah jawaban benar (soal yang belum dijawab dihitung salah).
+  int get correctCount {
+    var count = 0;
+    for (var i = 0; i < _questions.length; i++) {
+      if (_answers[i] == _questions[i].correctIndex) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   /// Menyimpan pilihan pengguna untuk soal aktif.
   void selectOption(int index) {
     if (index < 0 || index >= currentQuestion.options.length) {
