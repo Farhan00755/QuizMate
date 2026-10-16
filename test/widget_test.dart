@@ -27,6 +27,8 @@ Future<void> answerAllQuestions(WidgetTester tester) async {
 
 Future<void> startQuiz(WidgetTester tester, {String name = 'Budi'}) async {
   await tester.enterText(find.byType(TextFormField).first, name);
+  await tester.ensureVisible(find.text('Mulai Kuis'));
+  await tester.pumpAndSettle();
   await tester.tap(find.text('Mulai Kuis'));
   await tester.pumpAndSettle();
 }
@@ -52,6 +54,8 @@ void main() {
   ) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
 
+    await tester.ensureVisible(find.text('Mulai Kuis'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Mulai Kuis'));
     await tester.pump();
 
