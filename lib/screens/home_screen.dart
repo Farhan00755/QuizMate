@@ -144,33 +144,23 @@ class _BrandHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.quiz_outlined,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'QuizMate',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
+        Image.asset(
+          'assets/images/quiz_illustration.png',
+          width: 120,
+          height: 90,
+          fit: BoxFit.contain,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+        const Text(
+          'QuizMate',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.3,
+            color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(height: 12),
         const Text(
           'Uji pengetahuanmu dalam beberapa menit.',
           style: TextStyle(
