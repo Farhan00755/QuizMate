@@ -166,6 +166,7 @@ void main() {
     final theme = Theme.of(tester.element(find.byType(HomeScreen)));
     expect(theme.scaffoldBackgroundColor, AppColors.background);
     expect(theme.colorScheme.primary, AppColors.primary);
+    expect(theme.textTheme.bodyMedium?.fontFamily, 'Roboto');
   });
 
   test('Data soal lokal valid', () {
