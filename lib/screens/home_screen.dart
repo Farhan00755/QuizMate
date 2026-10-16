@@ -4,7 +4,6 @@ import '../constants/app_colors.dart';
 import '../widgets/primary_button.dart';
 import 'quiz_screen.dart';
 
-/// Layar pembuka tempat pengguna mengisi nama sebelum memulai kuis.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -17,7 +16,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
 
-  /// Validasi format email sederhana, mis. `nama@domain.com`.
   static final _emailPattern = RegExp(r'^[\w.+-]+@[\w-]+(\.[\w-]+)+$');
 
   @override
@@ -36,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? _validateEmail(String? value) {
     final email = value?.trim() ?? '';
-    // Email bersifat opsional, jadi kosong tetap boleh.
     if (email.isEmpty) {
       return null;
     }
@@ -78,8 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  // Biarkan konten terpusat saat layar tinggi,
-                  // tetapi tetap bisa di-scroll saat layar pendek / keyboard muncul.
                   minHeight: constraints.maxHeight - (verticalPadding * 2),
                 ),
                 child: Center(
@@ -141,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// Bagian atas: tanda aplikasi kecil + nama + headline.
 class _BrandHeader extends StatelessWidget {
   const _BrandHeader();
 
@@ -201,7 +195,6 @@ class _BrandHeader extends StatelessWidget {
   }
 }
 
-/// Text field dengan label di atas, dipakai ulang untuk nama dan email.
 class _LabeledTextField extends StatelessWidget {
   const _LabeledTextField({
     required this.label,
