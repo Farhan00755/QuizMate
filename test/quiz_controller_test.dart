@@ -48,4 +48,19 @@ void main() {
     expect(controller.isLastQuestion, isTrue);
     expect(controller.progress, 1.0);
   });
+
+  test('Menghitung jumlah jawaban benar', () {
+    final controller = QuizController(questions: quizQuestions);
+    addTearDown(controller.dispose);
+
+    for (var i = 0; i < quizQuestions.length; i++) {
+      controller.selectOption(quizQuestions[i].correctIndex);
+      if (!controller.isLastQuestion) {
+        controller.next();
+      }
+    }
+
+    expect(controller.answeredCount, quizQuestions.length);
+    expect(controller.correctCount, quizQuestions.length);
+  });
 }

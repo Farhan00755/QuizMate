@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:quiz_mate/data/questions.dart';
 import 'package:quiz_mate/screens/home_screen.dart';
 import 'package:quiz_mate/screens/quiz_screen.dart';
+import 'package:quiz_mate/screens/result_screen.dart';
 
 void main() {
   testWidgets('Menampilkan elemen utama Home Screen', (
@@ -88,6 +89,37 @@ void main() {
 
     expect(find.text('Soal 2 dari ${quizQuestions.length}'), findsOneWidget);
     expect(find.text(quizQuestions[1].question), findsOneWidget);
+  });
+
+  testWidgets('Menyelesaikan kuis menampilkan Result Screen', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: QuizScreen(playerName: 'Budi')),
+    );
+
+    for (var i = 0; i < quizQuestions.length; i++) {
+      final question = quizQuestions[i];
+      final correctOption = find.text(question.options[question.correctIndex]);
+
+      await tester.ensureVisible(correctOption);
+      await tester.pumpAndSettle();
+      await tester.tap(correctOption);
+      await tester.pump();
+
+      await tester.tap(
+        find.text(
+          i == quizQuestions.length - 1 ? 'Selesai' : 'Soal berikutnya',
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    expect(find.byType(ResultScreen), findsOneWidget);
+    expect(
+      find.text('${quizQuestions.length} / ${quizQuestions.length}'),
+      findsOneWidget,
+    );
   });
 
   test('Data soal lokal valid', () {
