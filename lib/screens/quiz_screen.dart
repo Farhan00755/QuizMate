@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/app_colors.dart';
 import '../data/questions.dart';
 import '../models/question.dart';
 import '../state/quiz_controller.dart';
@@ -50,7 +49,6 @@ class _QuizScreenState extends State<QuizScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: AppColors.surface,
           title: const Text('Keluar dari kuis?'),
           content: const Text('Jawaban yang sudah dipilih akan hilang.'),
           actions: [
@@ -74,8 +72,9 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: ListenableBuilder(
           listenable: _controller,
@@ -122,11 +121,11 @@ class _QuizScreenState extends State<QuizScreen> {
                             children: [
                               _QuestionCard(question: question),
                               const SizedBox(height: 20),
-                              const Text(
+                              Text(
                                 'Pilih satu jawaban yang paling tepat.',
                                 style: TextStyle(
                                   fontSize: 13.5,
-                                  color: AppColors.textSecondary,
+                                  color: colors.onSurfaceVariant,
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -188,6 +187,8 @@ class _QuizHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(6, 6, 20, 6),
       child: Row(
@@ -195,16 +196,16 @@ class _QuizHeader extends StatelessWidget {
           IconButton(
             onPressed: onBack,
             icon: const Icon(Icons.arrow_back),
-            color: AppColors.textPrimary,
+            color: colors.onSurface,
             tooltip: 'Kembali',
           ),
           const SizedBox(width: 2),
-          const Text(
+          Text(
             'QuizMate',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: colors.onSurface,
             ),
           ),
         ],
@@ -231,10 +232,10 @@ class _QuizProgress extends StatelessWidget {
       children: [
         Text(
           'Soal $current dari $total',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: 8),
@@ -254,21 +255,23 @@ class _QuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Text(
         question.question,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 19,
           fontWeight: FontWeight.w600,
           height: 1.4,
-          color: AppColors.textPrimary,
+          color: colors.onSurface,
         ),
       ),
     );
@@ -292,8 +295,10 @@ class _OptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Material(
-      color: AppColors.surface,
+      color: colors.surface,
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: onTap,
@@ -303,7 +308,7 @@ class _OptionTile extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? colors.primary : colors.outlineVariant,
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -315,10 +320,12 @@ class _OptionTile extends StatelessWidget {
                 height: 28,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.background,
+                  color: isSelected
+                      ? colors.primary
+                      : colors.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.border,
+                    color: isSelected ? colors.primary : colors.outlineVariant,
                   ),
                 ),
                 child: Text(
@@ -326,7 +333,7 @@ class _OptionTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: isSelected ? Colors.white : AppColors.primary,
+                    color: isSelected ? colors.onPrimary : colors.primary,
                   ),
                 ),
               ),
@@ -338,9 +345,7 @@ class _OptionTile extends StatelessWidget {
                     fontSize: 15.5,
                     height: 1.35,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected
-                        ? AppColors.primaryDark
-                        : AppColors.textPrimary,
+                    color: isSelected ? colors.primary : colors.onSurface,
                   ),
                 ),
               ),

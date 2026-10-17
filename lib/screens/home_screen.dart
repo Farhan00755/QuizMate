@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../constants/app_colors.dart';
 import '../widgets/primary_button.dart';
 import 'quiz_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.onToggleTheme});
+
+  final VoidCallback? onToggleTheme;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -65,86 +66,115 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final horizontalPadding = constraints.maxWidth < 360 ? 20.0 : 24.0;
-            final verticalPadding = constraints.maxHeight < 640 ? 24.0 : 32.0;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: verticalPadding,
-              ),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight - (verticalPadding * 2),
-                ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 460),
-                    child: Form(
-                      key: _formKey,
-                      autovalidateMode: _autovalidateMode,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const _BrandHeader(),
-                          const SizedBox(height: 32),
-                          _LabeledTextField(
-                            label: 'Nama kamu',
-                            hint: 'Masukkan nama...',
-                            controller: _nameController,
-                            validator: _validateName,
-                            textInputAction: TextInputAction.next,
-                            textCapitalization: TextCapitalization.words,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(40),
-                            ],
-                            autofillHints: const [AutofillHints.name],
-                          ),
-                          const SizedBox(height: 20),
-                          _LabeledTextField(
-                            label: 'Email',
-                            hint: 'Masukkan email...',
-                            controller: _emailController,
-                            validator: _validateEmail,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.done,
-                            isOptional: true,
-                            onSubmitted: (_) => _handleStartQuiz(),
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(80),
-                            ],
-                            autofillHints: const [AutofillHints.email],
-                          ),
-                          const SizedBox(height: 28),
-                          PrimaryButton(
-                            label: 'Mulai Kuis',
-                            onPressed: _handleStartQuiz,
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Nama dipakai untuk menampilkan hasil kuismu.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              height: 1.4,
-                              color: AppColors.textSecondary,
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final horizontalPadding = constraints.maxWidth < 360
+                      ? 20.0
+                      : 24.0;
+                  final verticalPadding = constraints.maxHeight < 640
+                      ? 24.0
+                      : 32.0;
+
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: verticalPadding,
+                    ),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight:
+                            constraints.maxHeight - (verticalPadding * 2),
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 460),
+                          child: Form(
+                            key: _formKey,
+                            autovalidateMode: _autovalidateMode,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const _BrandHeader(),
+                                const SizedBox(height: 32),
+                                _LabeledTextField(
+                                  label: 'Nama kamu',
+                                  hint: 'Masukkan nama...',
+                                  controller: _nameController,
+                                  validator: _validateName,
+                                  textInputAction: TextInputAction.next,
+                                  textCapitalization: TextCapitalization.words,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(40),
+                                  ],
+                                  autofillHints: const [AutofillHints.name],
+                                ),
+                                const SizedBox(height: 20),
+                                _LabeledTextField(
+                                  label: 'Email',
+                                  hint: 'Masukkan email...',
+                                  controller: _emailController,
+                                  validator: _validateEmail,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.done,
+                                  isOptional: true,
+                                  onSubmitted: (_) => _handleStartQuiz(),
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(80),
+                                  ],
+                                  autofillHints: const [AutofillHints.email],
+                                ),
+                                const SizedBox(height: 28),
+                                PrimaryButton(
+                                  label: 'Mulai Kuis',
+                                  onPressed: _handleStartQuiz,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Nama dipakai untuk menampilkan hasil kuismu.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    height: 1.4,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
+                  );
+                },
+              ),
+            ),
+            if (widget.onToggleTheme != null)
+              Positioned(
+                top: 4,
+                right: 8,
+                child: IconButton(
+                  onPressed: widget.onToggleTheme,
+                  tooltip: isDark ? 'Mode terang' : 'Mode gelap',
+                  icon: Icon(
+                    isDark
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
                   ),
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-            );
-          },
+          ],
         ),
       ),
     );
@@ -156,6 +186,7 @@ class _BrandHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final isCompact = MediaQuery.sizeOf(context).width < 360;
     final illustrationWidth = isCompact ? 104.0 : 120.0;
 
@@ -169,13 +200,13 @@ class _BrandHeader extends StatelessWidget {
           fit: BoxFit.contain,
         ),
         const SizedBox(height: 16),
-        const Text(
+        Text(
           'QuizMate',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
-            color: AppColors.primary,
+            color: colors.primary,
           ),
         ),
         const SizedBox(height: 12),
@@ -185,17 +216,17 @@ class _BrandHeader extends StatelessWidget {
             fontSize: isCompact ? 24 : 26,
             fontWeight: FontWeight.w700,
             height: 1.25,
-            color: AppColors.textPrimary,
+            color: colors.onSurface,
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Kuis pilihan ganda singkat untuk mengukur pemahamanmu. '
           'Tidak perlu daftar akun.',
           style: TextStyle(
             fontSize: 14.5,
             height: 1.5,
-            color: AppColors.textSecondary,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ],
@@ -232,6 +263,8 @@ class _LabeledTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -239,19 +272,19 @@ class _LabeledTextField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: colors.onSurface,
               ),
             ),
             if (isOptional) ...[
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 '(opsional)',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: AppColors.textSecondary,
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -267,7 +300,7 @@ class _LabeledTextField extends StatelessWidget {
           onFieldSubmitted: onSubmitted,
           inputFormatters: inputFormatters,
           autofillHints: autofillHints,
-          style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 15, color: colors.onSurface),
           decoration: InputDecoration(hintText: hint),
         ),
       ],

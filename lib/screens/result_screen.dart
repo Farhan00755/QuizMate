@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/app_colors.dart';
 import '../widgets/primary_button.dart';
 
 class ResultScreen extends StatelessWidget {
@@ -34,6 +33,8 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -43,7 +44,6 @@ class ResultScreen extends StatelessWidget {
         _backToHome(context);
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -73,34 +73,34 @@ class ResultScreen extends StatelessWidget {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                color: AppColors.primary,
+                                color: colors.primary,
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.emoji_events_outlined,
-                                color: Colors.white,
+                                color: colors.onPrimary,
                                 size: 28,
                               ),
                             ),
                           ),
                           const SizedBox(height: 20),
-                          const Text(
+                          Text(
                             'Kuis selesai',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
+                              color: colors.onSurface,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Kerja bagus, $playerName!',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14.5,
                               height: 1.5,
-                              color: AppColors.textSecondary,
+                              color: colors.onSurfaceVariant,
                             ),
                           ),
                           const SizedBox(height: 28),
@@ -113,10 +113,10 @@ class ResultScreen extends StatelessWidget {
                           Text(
                             _feedback,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               height: 1.5,
-                              color: AppColors.textPrimary,
+                              color: colors.onSurface,
                             ),
                           ),
                           const SizedBox(height: 28),
@@ -151,27 +151,29 @@ class _ScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Skor kamu',
-            style: TextStyle(fontSize: 13.5, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 13.5, color: colors.onSurfaceVariant),
           ),
           const SizedBox(height: 8),
           Text(
             '$correctCount / $totalQuestions',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.w700,
               height: 1.1,
-              color: AppColors.primary,
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: 18),
@@ -182,10 +184,7 @@ class _ScoreCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             '${(percentage * 100).round()}% benar',
-            style: const TextStyle(
-              fontSize: 13.5,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 13.5, color: colors.onSurfaceVariant),
           ),
         ],
       ),
