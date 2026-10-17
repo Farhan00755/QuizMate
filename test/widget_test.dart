@@ -7,6 +7,7 @@ import 'package:quiz_mate/main.dart';
 import 'package:quiz_mate/screens/home_screen.dart';
 import 'package:quiz_mate/screens/quiz_screen.dart';
 import 'package:quiz_mate/screens/result_screen.dart';
+import 'package:quiz_mate/theme/app_theme.dart';
 
 Future<void> answerAllQuestions(WidgetTester tester) async {
   for (var i = 0; i < quizQuestions.length; i++) {
@@ -271,6 +272,23 @@ void main() {
 
     expect(find.byType(HomeScreen), findsOneWidget);
     expect(find.byType(QuizScreen), findsNothing);
+  });
+
+  testWidgets('Mengaktifkan mode gelap dari Home', (WidgetTester tester) async {
+    await tester.pumpWidget(const QuizMateApp());
+
+    final lightTheme = Theme.of(tester.element(find.byType(HomeScreen)));
+    expect(lightTheme.brightness, Brightness.light);
+
+    await tester.tap(find.byTooltip('Mode gelap'));
+    await tester.pumpAndSettle();
+
+    final darkTheme = Theme.of(tester.element(find.byType(HomeScreen)));
+    expect(darkTheme.brightness, Brightness.dark);
+    expect(
+      darkTheme.scaffoldBackgroundColor,
+      AppTheme.dark.scaffoldBackgroundColor,
+    );
   });
 
   test('Data soal lokal valid', () {
