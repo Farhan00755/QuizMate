@@ -217,6 +217,62 @@ void main() {
     expect(find.byType(ResultScreen), findsOneWidget);
   });
 
+  testWidgets('Error nama hilang setelah mengetik', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+
+    await tester.ensureVisible(find.text('Mulai Kuis'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Mulai Kuis'));
+    await tester.pump();
+    expect(find.text('Nama wajib diisi'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField).first, 'Budi');
+    await tester.pump();
+
+    expect(find.text('Nama wajib diisi'), findsNothing);
+  });
+
+  testWidgets('Keluar kuis tanpa menjawab langsung kembali', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await startQuiz(tester);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(QuizScreen), findsNothing);
+  });
+
+  testWidgets('Konfirmasi keluar kuis saat sudah menjawab', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await startQuiz(tester);
+
+    await tester.tap(find.text(quizQuestions.first.options.first));
+    await tester.pump();
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Keluar dari kuis?'), findsOneWidget);
+
+    await tester.tap(find.text('Batal'));
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizScreen), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Keluar'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(QuizScreen), findsNothing);
+  });
+
   test('Data soal lokal valid', () {
     expect(quizQuestions, isNotEmpty);
     for (final question in quizQuestions) {
