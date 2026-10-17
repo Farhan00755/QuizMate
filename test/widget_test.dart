@@ -173,6 +173,50 @@ void main() {
     expect(theme.textTheme.bodyMedium?.fontFamily, 'Roboto');
   });
 
+  testWidgets('Home tetap rapi di layar kecil', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(320, 560);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+
+    expect(
+      find.text('Uji pengetahuanmu dalam beberapa menit.'),
+      findsOneWidget,
+    );
+    expect(find.text('Mulai Kuis'), findsOneWidget);
+  });
+
+  testWidgets('Home tetap rapi di layar besar', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+
+    expect(find.text('QuizMate'), findsOneWidget);
+  });
+
+  testWidgets('Quiz dan Result tidak overflow di layar kecil', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 560);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(home: QuizScreen(playerName: 'Budi')),
+    );
+    expect(find.text('Soal 1 dari ${quizQuestions.length}'), findsOneWidget);
+
+    await answerAllQuestions(tester);
+
+    expect(find.byType(ResultScreen), findsOneWidget);
+  });
+
   test('Data soal lokal valid', () {
     expect(quizQuestions, isNotEmpty);
     for (final question in quizQuestions) {
