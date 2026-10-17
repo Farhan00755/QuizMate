@@ -45,6 +45,33 @@ class _QuizScreenState extends State<QuizScreen> {
     _controller.next();
   }
 
+  Future<void> _confirmExit() async {
+    final leave = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: AppColors.surface,
+          title: const Text('Keluar dari kuis?'),
+          content: const Text('Jawaban yang sudah dipilih akan hilang.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Keluar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (leave == true && mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,88 +82,97 @@ class _QuizScreenState extends State<QuizScreen> {
           builder: (context, _) {
             final question = _controller.currentQuestion;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _QuizHeader(onBack: () => Navigator.of(context).maybePop()),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: _contentMaxWidth,
-                      ),
-                      child: _QuizProgress(
-                        current: _controller.currentIndex + 1,
-                        total: _controller.totalQuestions,
-                        value: _controller.progress,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            return PopScope(
+              canPop: _controller.answeredCount == 0,
+              onPopInvokedWithResult: (didPop, result) {
+                if (didPop) {
+                  return;
+                }
+                _confirmExit();
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _QuizHeader(onBack: () => Navigator.of(context).maybePop()),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(
                           maxWidth: _contentMaxWidth,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _QuestionCard(question: question),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'Pilih satu jawaban yang paling tepat.',
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                color: AppColors.textSecondary,
+                        child: _QuizProgress(
+                          current: _controller.currentIndex + 1,
+                          total: _controller.totalQuestions,
+                          value: _controller.progress,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: _contentMaxWidth,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _QuestionCard(question: question),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'Pilih satu jawaban yang paling tepat.',
+                                style: TextStyle(
+                                  fontSize: 13.5,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            for (
-                              var i = 0;
-                              i < question.options.length;
-                              i++
-                            ) ...[
-                              _OptionTile(
-                                index: i,
-                                text: question.options[i],
-                                isSelected: _controller.selectedIndex == i,
-                                onTap: () => _controller.selectOption(i),
-                              ),
-                              if (i != question.options.length - 1)
-                                const SizedBox(height: 12),
+                              const SizedBox(height: 12),
+                              for (
+                                var i = 0;
+                                i < question.options.length;
+                                i++
+                              ) ...[
+                                _OptionTile(
+                                  index: i,
+                                  text: question.options[i],
+                                  isSelected: _controller.selectedIndex == i,
+                                  onTap: () => _controller.selectOption(i),
+                                ),
+                                if (i != question.options.length - 1)
+                                  const SizedBox(height: 12),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: _contentMaxWidth,
-                      ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: PrimaryButton(
-                          label: _controller.isLastQuestion
-                              ? 'Selesai'
-                              : 'Soal berikutnya',
-                          onPressed: _controller.hasAnsweredCurrent
-                              ? _handleNext
-                              : null,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: _contentMaxWidth,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: PrimaryButton(
+                            label: _controller.isLastQuestion
+                                ? 'Selesai'
+                                : 'Soal berikutnya',
+                            onPressed: _controller.hasAnsweredCurrent
+                                ? _handleNext
+                                : null,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../constants/app_colors.dart';
 import '../widgets/primary_button.dart';
@@ -17,6 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _emailController = TextEditingController();
 
   static final _emailPattern = RegExp(r'^[\w.+-]+@[\w-]+(\.[\w-]+)+$');
+
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
   @override
   void dispose() {
@@ -47,6 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
     FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState!.validate()) {
+      setState(() {
+        _autovalidateMode = AutovalidateMode.onUserInteraction;
+      });
       return;
     }
 
@@ -82,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     constraints: const BoxConstraints(maxWidth: 460),
                     child: Form(
                       key: _formKey,
+                      autovalidateMode: _autovalidateMode,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -95,6 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             validator: _validateName,
                             textInputAction: TextInputAction.next,
                             textCapitalization: TextCapitalization.words,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(40),
+                            ],
+                            autofillHints: const [AutofillHints.name],
                           ),
                           const SizedBox(height: 20),
                           _LabeledTextField(
@@ -106,6 +117,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             textInputAction: TextInputAction.done,
                             isOptional: true,
                             onSubmitted: (_) => _handleStartQuiz(),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(80),
+                            ],
+                            autofillHints: const [AutofillHints.email],
                           ),
                           const SizedBox(height: 28),
                           PrimaryButton(
@@ -199,6 +214,8 @@ class _LabeledTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.isOptional = false,
     this.onSubmitted,
+    this.inputFormatters,
+    this.autofillHints,
   });
 
   final String label;
@@ -210,6 +227,8 @@ class _LabeledTextField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final bool isOptional;
   final ValueChanged<String>? onSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
 
   @override
   Widget build(BuildContext context) {
@@ -246,6 +265,8 @@ class _LabeledTextField extends StatelessWidget {
           textInputAction: textInputAction,
           textCapitalization: textCapitalization,
           onFieldSubmitted: onSubmitted,
+          inputFormatters: inputFormatters,
+          autofillHints: autofillHints,
           style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
           decoration: InputDecoration(hintText: hint),
         ),
