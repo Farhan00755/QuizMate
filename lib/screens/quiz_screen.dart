@@ -122,13 +122,16 @@ class _QuizScreenState extends State<QuizScreen> {
                       constraints: const BoxConstraints(
                         maxWidth: _contentMaxWidth,
                       ),
-                      child: PrimaryButton(
-                        label: _controller.isLastQuestion
-                            ? 'Selesai'
-                            : 'Soal berikutnya',
-                        onPressed: _controller.hasAnsweredCurrent
-                            ? _handleNext
-                            : null,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: PrimaryButton(
+                          label: _controller.isLastQuestion
+                              ? 'Selesai'
+                              : 'Soal berikutnya',
+                          onPressed: _controller.hasAnsweredCurrent
+                              ? _handleNext
+                              : null,
+                        ),
                       ),
                     ),
                   ),

@@ -47,11 +47,14 @@ class ResultScreen extends StatelessWidget {
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              const verticalPadding = 32.0;
+              final horizontalPadding = constraints.maxWidth < 360
+                  ? 20.0
+                  : 24.0;
+              final verticalPadding = constraints.maxHeight < 640 ? 24.0 : 32.0;
 
               return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
                   vertical: verticalPadding,
                 ),
                 child: ConstrainedBox(

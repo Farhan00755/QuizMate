@@ -64,11 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            const horizontalPadding = 24.0;
-            const verticalPadding = 32.0;
+            final horizontalPadding = constraints.maxWidth < 360 ? 20.0 : 24.0;
+            final verticalPadding = constraints.maxHeight < 640 ? 24.0 : 32.0;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
                 vertical: verticalPadding,
               ),
@@ -141,13 +141,16 @@ class _BrandHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = MediaQuery.sizeOf(context).width < 360;
+    final illustrationWidth = isCompact ? 104.0 : 120.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.asset(
           'assets/images/quiz_illustration.png',
-          width: 120,
-          height: 90,
+          width: illustrationWidth,
+          height: illustrationWidth * 0.75,
           fit: BoxFit.contain,
         ),
         const SizedBox(height: 16),
@@ -161,10 +164,10 @@ class _BrandHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           'Uji pengetahuanmu dalam beberapa menit.',
           style: TextStyle(
-            fontSize: 26,
+            fontSize: isCompact ? 24 : 26,
             fontWeight: FontWeight.w700,
             height: 1.25,
             color: AppColors.textPrimary,
