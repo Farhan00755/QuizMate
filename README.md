@@ -16,10 +16,6 @@ disimpan secara lokal di dalam aplikasi dan tidak memerlukan akun.
 | Platform | Android, iOS, web, Linux, macOS, dan Windows (folder platform tersedia dari template Flutter) |
 | Repositori | [github.com/Farhan00755/QuizMate](https://github.com/Farhan00755/QuizMate) |
 
-> Catatan platform: konfigurasi untuk semua target Flutter tersedia di
-> repositori, tetapi aplikasi belum diverifikasi berjalan di setiap platform
-> tersebut. Pengembangan saat ini berfokus pada tampilan mobile.
-
 ## Fitur Aplikasi
 
 ### Yang telah diimplementasikan
@@ -97,6 +93,25 @@ quiz_mate/
 ├── android/  ios/  web/  linux/  macos/  windows/
 ├── pubspec.yaml
 └── README.md
+```
+
+## Screenshot Aplikasi
+
+```markdown
+### Home Screen
+![Home Screen](docs/screenshots/home.png)
+
+### Quiz Screen
+![Quiz Screen](docs/screenshots/quiz.png)
+
+### Result Screen
+![Result Screen](docs/screenshots/result.png)
+
+### Dialog Keluar Kuis
+![Dialog Keluar Kuis](docs/screenshots/exit-dialog.png)
+
+### Home Screen Mode Gelap (opsional)
+![Home Screen Mode Gelap](docs/screenshots/home-dark.png)
 ```
 
 ## Cara Menjalankan Aplikasi
