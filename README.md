@@ -164,18 +164,10 @@ quiz_mate/
    flutter run
    ```
 
-### Pemeriksaan kode dan pengujian
-
-```bash
-flutter analyze
-flutter test
-```
-
-## Mockup atau Prototype
+## Mockup 
 
 [[Link Mockup](https://www.figma.com/design/nremUhOkiOQ7PSpJvNXnI1/Untitled?node-id=0-1&t=HWgvIFjxVNa2gFoH-1)]
 
-## Identitas Mahasiswa
 
 | Item | Keterangan |
 | --- | --- |
