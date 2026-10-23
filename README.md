@@ -97,7 +97,6 @@ quiz_mate/
 
 ## Screenshot Aplikasi
 
-```markdown
 ### Home Screen
 ![Home Screen](docs/screenshots/home.png)
 
@@ -112,7 +111,6 @@ quiz_mate/
 
 ### Home Screen Mode Gelap (opsional)
 ![Home Screen Mode Gelap](docs/screenshots/home-dark.png)
-```
 
 ## Cara Menjalankan Aplikasi
 
