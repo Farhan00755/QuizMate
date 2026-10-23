@@ -150,7 +150,7 @@ flutter test
 
 ## Mockup atau Prototype
 
-[[Masukkan tautan Figma atau prototype di sini](https://www.figma.com/design/nremUhOkiOQ7PSpJvNXnI1/Untitled?node-id=0-1&t=HWgvIFjxVNa2gFoH-1)]
+[[Link Mockup](https://www.figma.com/design/nremUhOkiOQ7PSpJvNXnI1/Untitled?node-id=0-1&t=HWgvIFjxVNa2gFoH-1)]
 
 ## Identitas Mahasiswa
 
