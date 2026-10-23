@@ -98,19 +98,29 @@ quiz_mate/
 ## Screenshot Aplikasi
 
 ### Home Screen
-![Home Screen](docs/screenshots/home.png)
+<p align="center">
+  <img src="docs/screenshots/home.png" alt="Home Screen" width="280">
+</p>
 
 ### Quiz Screen
-![Quiz Screen](docs/screenshots/quiz.png)
+<p align="center">
+  <img src="docs/screenshots/quiz.png" alt="Quiz Screen" width="280">
+</p>
 
 ### Result Screen
-![Result Screen](docs/screenshots/result.png)
+<p align="center">
+  <img src="docs/screenshots/result.png" alt="Result Screen" width="280">
+</p>
 
 ### Dialog Keluar Kuis
-![Dialog Keluar Kuis](docs/screenshots/exit-dialog.png)
+<p align="center">
+  <img src="docs/screenshots/exit-dialog.png" alt="Dialog Keluar Kuis" width="280">
+</p>
 
 ### Home Screen Mode Gelap (opsional)
-![Home Screen Mode Gelap](docs/screenshots/home-dark.png)
+<p align="center">
+  <img src="docs/screenshots/home-dark.png" alt="Home Screen Mode Gelap" width="280">
+</p>
 
 ## Cara Menjalankan Aplikasi
 
